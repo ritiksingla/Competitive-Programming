@@ -1,0 +1,49 @@
+\documentclass[12pt, a4paper, twoside]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb,amsmath}
+\usepackage{comment}
+\usepackage{datetime}
+\usepackage[pdfusetitle]{hyperref}
+\usepackage[all]{xy}
+\usepackage{graphicx}
+\addtolength{\parskip}{.5\baselineskip}
+
+\usepackage{listings} %library for code
+\usepackage{color}    %make the colorful code look nice!
+\usepackage[landscape, left=1cm, right=1cm, top=1cm, bottom=2cm]{geometry} %to leave the margin
+
+\definecolor{gray}{rgb}{0.4, 0.4, 0.4} %color pros comments
+%\renewcommand{\footnotesize}{\small} %this is to change the font size of the code
+\setlength{\columnseprule}{0.2pt} %bar separating the two columns
+\setlength{\columnsep}{15pt} %distance from the text to the bar
+
+\lstset{ %code options
+breaklines=true,
+keywordstyle=\color{blue},
+commentstyle=\color{gray},
+basicstyle=\footnotesize,
+breakatwhitespace=true,
+language=C++,
+%frame=single, %I don't know if I like it or not
+numbers=none,
+rulecolor=\color{black},
+showstringspaces=false
+stringstyle=\color{blue},
+tabsize=4,
+basicstyle=\ttfamily\footnotesize, % source
+literate={~} {$\sim$}{1} % ~ Nice!
+}
+
+\title{Competitive Programming}
+\author{Ritik Singla}
+
+
+\begin{document}
+\twocolumn
+\date{} %take the date
+\maketitle
+
+
+\renewcommand{\contentsname}{Index}
+\tableofcontents
