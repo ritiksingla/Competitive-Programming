@@ -42,7 +42,9 @@ struct str_hash {
 		if (l) {
 			res = res - mul_mod(Hash[l - 1], Powers[r - (l - 1)]);
 		}
-		if (res < 0) res += MOD_;
+		if (res < 0) {
+			res += MOD_;
+		}
 		return res;
 	}
 

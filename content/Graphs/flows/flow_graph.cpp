@@ -1,8 +1,8 @@
 // Flow Graph
-// 
+//
 template <typename T>
 class flow_graph {
-public:
+  public:
 	static constexpr T eps = (T) 1e-9;
 
 	struct edge {
@@ -26,7 +26,7 @@ public:
 	}
 
 	void clear_flow() {
-		for (const edge &e : edges) {
+		for (const edge& e : edges) {
 			e.f = 0;
 		}
 		flow = 0;

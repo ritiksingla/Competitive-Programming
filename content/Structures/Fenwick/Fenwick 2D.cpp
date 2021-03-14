@@ -1,15 +1,32 @@
 // Fenwick 2D
 //
-template <typename T>
+template <typename T, class F = function<T(const T&, const T&)>>
 class fenwick2d {
-private:
+  private:
 	vector<vector<T>> mat;
 	int N, M;
-public:
-	fenwick2d(int N_, int M_) : N(N_), M(M_) {
+	F func;
+	T initializer;
+
+  public:
+	fenwick2d(vector<vector<T>>A, T initializer_, const F& f) : initializer(initializer_), func(f) {
+		N = int(A.size());
+		M = int(A[0].size());
 		mat.resize(N);
 		for (int i = 0; i < N; i++) {
-			mat[i].resize(M);
+			mat[i].resize(M, initializer);
+		}
+		for (int i = 0; i < N; ++i) {
+			for (int j = 0; j < M; ++j) {
+				modify(i, j, A[i][j]);
+			}
+		}
+	}
+
+	fenwick2d(int N_, int M_, T initializer_, const F& f) : N(N_), M(M_), initializer(initializer_), func(f) {
+		mat.resize(N);
+		for (int i = 0; i < N; i++) {
+			mat[i].resize(M, initializer);
 		}
 	}
 	inline void modify(int i, int j, T v) {
@@ -18,7 +35,7 @@ public:
 		while (x < N) {
 			int y = j;
 			while (y < M) {
-				mat[x][y] += v;
+				mat[x][y] = func(mat[x][y], v);
 				y |= (y + 1);
 			}
 			x |= (x + 1);
@@ -26,28 +43,16 @@ public:
 	}
 	inline T get(int i, int j) {
 		assert(i >= 0 && j >= 0 && i < N && j < M);
-		T v{};
+		T v = initializer;
 		int x = i;
 		while (x >= 0) {
 			int y = j;
 			while (y >= 0) {
-				v += mat[x][y];
+				v = func(v, mat[x][y]);
 				y = (y & (y + 1)) - 1;
 			}
 			x = (x & (x + 1)) - 1;
 		}
 		return v;
-	}
-	inline T get(int x1, int y1, int x2, int y2) {
-		assert(x1 <= x2 && y1 <= y2 && x1 >= 0 && y1 >= 0 && x2 < N && y2 < M);
-		T res{};
-		res += get(x2, y2);
-		if (x1 > 0)
-			res -= get(x1 - 1, y2);
-		if (y1 > 0)
-			res -= get(x2, y1 - 1);
-		if (x1 > 0 && y1 > 0)
-			res += get(x1 - 1, y1 - 1);
-		return res;
 	}
 };

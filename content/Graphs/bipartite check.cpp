@@ -1,30 +1,37 @@
 // Bipartite Check
 //
-vector<int>color(n, -1);
-bool flag = true;
-for (int i = 0; i < n && flag; i++)
-{
-    if (color[i] == -1)
-    {
-        queue<int>q;
-        q.push(i);
-        color[i] = 0;
-        while (!q.empty() && flag)
-        {
-            int u = q.front();
-            q.pop();
-            for (auto v : g.adj[u])
-            {
-                if (color[v.to] == -1)
-                {
-                    color[v.to] = color[u] ^ 1;
-                    q.push(v.to);
-                }
-                else
-                {
-                    flag &= color[v.to] != color[u];
-                }
-            }
-        }
-    }
+template<typename T>
+bool is_bipartite(const graph<T>& g, vector<bool>& color) {
+	color.resize(g.n);
+	fill(color.begin(), color.end(), false);
+	vector<bool>vis(g.n, false);
+	bool flag = true;
+
+	auto bfs = [&](int st) {
+		queue<int>q;
+		q.push(st);
+		vis[st] = true;
+		while (!q.empty() && flag) {
+			int u = q.front();
+			q.pop();
+			for (int id : g.g[u]) {
+				auto& e = g.edges[id];
+				int to = u ^ e.from ^ e.to;
+				if (vis[to] == false) {
+					vis[to] = true;
+					color[to] = !color[u];
+					q.push(e.to);
+				} else if (color[e.to] == color[u]) {
+					flag = false;
+				}
+			}
+		}
+	};
+
+	for (int i = 0; i < g.n && flag; i++) {
+		if (vis[i] == false) {
+			bfs(i);
+		}
+	}
+	return flag;
 }

@@ -2,10 +2,10 @@
 //
 template <typename T>
 class fenwick3d {
-private:
-	tensor<T, 3>*mat;
+  private:
+	tensor<T, 3>* mat;
 	int A, B, C;
-public:
+  public:
 	fenwick3d(int A_, int B_, int C_) : A(A_), B(B_), C(C_) {
 		mat = new tensor<T, 3>({A, B, C});
 	}
@@ -46,21 +46,28 @@ public:
 	inline T get(int x1, int y1, int z1, int x2, int y2, int z2) {
 		assert(x1 <= x2 && y1 <= y2 && x1 >= 0 && y1 >= 0 && x2 < A && y2 < B && z1 <= z2 && z1 >= 0 && z2 < C);
 		T res{};
-		res += get (x2, y2, z2);
-		if (x1 > 0)
-			res -= get (x1 - 1, y2, z2);
-		if (y1 > 0)
-			res -= get (x2, y1 - 1, z2);
-		if (z1 > 0)
-			res -= get (x2, y2, z1 - 1);
-		if (y1 > 0 && z1 > 0)
-			res += get (x2, y1 - 1, z1 - 1);
-		if (x1 > 0 && z1 > 0)
-			res += get (x1 - 1, y2, z1 - 1);
-		if (x1 > 0 && y1 > 0)
-			res += get (x1 - 1, y1 - 1, z2);
-		if (x1 > 0 && y1 > 0 && z1 > 0)
-			res -= get (x1 - 1, y1 - 1, z1 - 1);
+		res += get(x2, y2, z2);
+		if (x1 > 0) {
+			res -= get(x1 - 1, y2, z2);
+		}
+		if (y1 > 0) {
+			res -= get(x2, y1 - 1, z2);
+		}
+		if (z1 > 0) {
+			res -= get(x2, y2, z1 - 1);
+		}
+		if (y1 > 0 && z1 > 0) {
+			res += get(x2, y1 - 1, z1 - 1);
+		}
+		if (x1 > 0 && z1 > 0) {
+			res += get(x1 - 1, y2, z1 - 1);
+		}
+		if (x1 > 0 && y1 > 0) {
+			res += get(x1 - 1, y1 - 1, z2);
+		}
+		if (x1 > 0 && y1 > 0 && z1 > 0) {
+			res -= get(x1 - 1, y1 - 1, z1 - 1);
+		}
 		return res;
 	}
 };

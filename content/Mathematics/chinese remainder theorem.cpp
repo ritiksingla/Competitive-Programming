@@ -25,8 +25,12 @@ struct crt {
 		tuple<int64_t, int64_t, int64_t>T = ext_gcd(m, C.m);
 		int64_t g, x, y;
 		tie(g, x, y) = T;
-		if ((a - C.a) % g) a = -1;
-		if (a == -1 or C.a == -1) return crt(-1, 0);
+		if ((a - C.a) % g) {
+			a = -1;
+		}
+		if (a == -1 or C.a == -1) {
+			return crt(-1, 0);
+		}
 		int64_t lcm = m / g * C.m;
 		int64_t ans = a + (x * (C.a - a) / g % (C.m / g)) * m;
 		return crt((ans % lcm + lcm) % lcm, lcm);

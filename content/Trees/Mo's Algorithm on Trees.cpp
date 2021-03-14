@@ -4,16 +4,15 @@
 using namespace std;
 const int maxn = 2e5 + 5;
 const int blk = 500;
-struct Query
-{
+struct Query {
 	int l, r, idx, lc;
 	bool flag;
-	bool operator<(const Query &q) const
-	{
+	bool operator<(const Query& q) const {
 		int x = l / blk;
 		int y = q.l / blk;
-		if (x != y)
+		if (x != y) {
 			return x < y;
+		}
 		return (x % 2 == 1 ? r<q.r: r>q.r);
 	}
 };
@@ -25,48 +24,41 @@ int euler[maxn];
 int timer = 1;
 const int lg = 19;
 int dp[maxn][lg];
-void dfs(int u, int p)
-{
+void dfs(int u, int p) {
 	lvl[u] = lvl[p] + 1;
 	euler[timer] = u;
 	st[u] = timer++;
 	dp[u][0] = p;
-	for (auto v : g[u])
-	{
-		if (v != p)
-		{
+	for (auto v : g[u]) {
+		if (v != p) {
 			dfs(v, u);
 		}
 	}
 	euler[timer] = u;
 	en[u] = timer++;
 }
-void preprocess(int n)
-{
-	for (int l = 1; l < lg; l++)
-	{
-		for (int i = 1; i <= n; i++)
-		{
+void preprocess(int n) {
+	for (int l = 1; l < lg; l++) {
+		for (int i = 1; i <= n; i++) {
 			dp[i][l] = dp[dp[i][l - 1]][l - 1];
 		}
 	}
 }
-int lca(int a, int b)
-{
-	if (lvl[a] < lvl[b])
+int lca(int a, int b) {
+	if (lvl[a] < lvl[b]) {
 		swap(a, b);
-	int dist = lvl[a] - lvl[b];
-	for (int l = lg - 1; l >= 0; l--)
-	{
-		if (((dist >> l) & 1))
-			a = dp[a][l];
 	}
-	if (a == b)
+	int dist = lvl[a] - lvl[b];
+	for (int l = lg - 1; l >= 0; l--) {
+		if (((dist >> l) & 1)) {
+			a = dp[a][l];
+		}
+	}
+	if (a == b) {
 		return a;
-	for (int l = lg - 1; l >= 0; l--)
-	{
-		if (dp[a][l] && dp[a][l] != dp[b][l])
-		{
+	}
+	for (int l = lg - 1; l >= 0; l--) {
+		if (dp[a][l] && dp[a][l] != dp[b][l]) {
 			a = dp[a][l];
 			b = dp[b][l];
 		}
@@ -76,21 +68,19 @@ int lca(int a, int b)
 bool vis[maxn];
 int freq[maxn];
 int ans;
-void upd(int node, int val)
-{
-	if (!vis[node])
-	{
+void upd(int node, int val) {
+	if (!vis[node]) {
 		vis[node] = 1;
 		freq[val]++;
-		if (freq[val] == 1)
+		if (freq[val] == 1) {
 			ans++;
-	}
-	else
-	{
+		}
+	} else {
 		vis[node] = 0;
 		freq[val]--;
-		if (freq[val] == 0)
+		if (freq[val] == 0) {
 			ans--;
+		}
 	}
 }
 ans = 0;
@@ -100,54 +90,48 @@ memset(vis, 0, sizeof vis);
 dfs(1, 0);
 preprocess(n);
 vector<Query>qry(q);
-for (int i = 0; i < q; i++)
-{
+for (int i = 0; i < q; i++) {
 	int u, v;
 	cin >> u >> v;
 	qry[i].lc = lca(u, v);
-	if (st[u] > st[v])
+	if (st[u] > st[v]) {
 		swap(u, v);
-	if (qry[i].lc == u)
+	}
+	if (qry[i].lc == u) {
 		qry[i].l = st[u], qry[i].r = st[v], qry[i].flag = 0;
-	else
+	} else {
 		qry[i].l = en[u], qry[i].r = st[v], qry[i].flag = 1;
+	}
 	qry[i].idx = i;
 }
 sort(begin(qry), end(qry));
 int res[q];
 int ml = 1, mr = 0;
-for (int i = 0; i < q; i++)
-{
+for (int i = 0; i < q; i++) {
 	int l = qry[i].l, r = qry[i].r;
 	bool flag = qry[i].flag;
 	int lc = qry[i].lc;
-	while (ml < l)
-	{
+	while (ml < l) {
 		upd(euler[ml], a[euler[ml]]);
 		ml++;
 	}
-	while (ml > l)
-	{
+	while (ml > l) {
 		ml--;
 		upd(euler[ml], a[euler[ml]]);
 	}
-	while (mr < r)
-	{
+	while (mr < r) {
 		mr++;
 		upd(euler[mr], a[euler[mr]]);
 	}
-	while (mr > r)
-	{
+	while (mr > r) {
 		upd(euler[mr], a[euler[mr]]);
 		mr--;
 	}
-	if (flag)
-	{
+	if (flag) {
 		upd(lc, a[lc]);
 	}
 	res[qry[i].idx] = ans;
-	if (flag)
-	{
+	if (flag) {
 		upd(lc, a[lc]);
 	}
 }

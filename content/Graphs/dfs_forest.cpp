@@ -1,8 +1,8 @@
 // DFS Forest
-// 
+//
 template <typename T>
 class dfs_forest : public forest<T> {
-public:
+  public:
     using forest<T>::edges;
     using forest<T>::g;
     using forest<T>::n;
@@ -44,7 +44,7 @@ public:
         dist.clear();
     }
 
-private:
+  private:
     void do_dfs(int v) {
         pos[v] = (int) order.size();
         order.push_back(v);
@@ -53,7 +53,7 @@ private:
             if (id == pe[v]) {
                 continue;
             }
-            auto &e = edges[id];
+            auto& e = edges[id];
             int to = e.from ^ e.to ^ v;
             depth[to] = depth[v] + 1;
             dist[to] = dist[v] + e.cost;
@@ -74,7 +74,7 @@ private:
         do_dfs(v);
     }
 
-public:
+  public:
     void dfs(int v, bool clear_order = true) {
         if (pv.empty()) {
             init();

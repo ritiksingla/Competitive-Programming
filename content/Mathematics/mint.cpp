@@ -1,277 +1,171 @@
 // Mint
-// 
-template<const int _mod>
-struct modular_int
-{
-    int x;
-    static vector<int> inverse_list ;
-    const static int inverse_limit;
-    const static bool is_prime;
-    modular_int()
-    {
-        x = 0;
-    }
-    template<typename T>
-    modular_int(const T z)
-    {
-        x = (z % _mod);
-        if (x < 0) x += _mod;
-    }
-    modular_int(const modular_int<_mod> *z)
-    {
-        x = z->x;
-    }
-    modular_int(const modular_int<_mod> &z)
-    {
-        x = z.x;
-    }
-    modular_int operator - (const modular_int<_mod> &m) const
-    {
-        modular_int<_mod> U;
-        U.x = x - m.x;
-        if (U.x < 0) U.x += _mod;
-        return U;
-    }
-    modular_int operator + (const modular_int<_mod> &m) const
-    {
-        modular_int<_mod> U;
-        U.x = x + m.x;
-        if (U.x >= _mod) U.x -= _mod;
-        return U;
-    }
-    modular_int &operator -= (const modular_int<_mod> &m)
-    {
-        x -= m.x;
-        if (x < 0) x += _mod;
-        return *this;
-    }
-    modular_int &operator += (const modular_int<_mod> &m)
-    {
-        x += m.x;
-        if (x >= _mod) x -= _mod;
-        return *this;
-    }
-    modular_int operator * (const modular_int<_mod> &m) const
-    {
-        modular_int<_mod> U;
-        U.x = (x * 1ull * m.x) % _mod;
-        return U;
-    }
-    modular_int &operator *= (const modular_int<_mod> &m)
-    {
-        x = (x * 1ull * m.x) % _mod;
-        return *this;
-    }
-    template<typename T>
-    friend modular_int operator + (const T &l, const modular_int<_mod> &p)
-    {
-        return (modular_int<_mod>(l) + p);
-    }
-    template<typename T>
-    friend modular_int operator - (const T &l, const modular_int<_mod> &p)
-    {
-        return (modular_int<_mod>(l) - p);
-    }
-    template<typename T>
-    friend modular_int operator * (const T &l, const modular_int<_mod> &p)
-    {
-        return (modular_int<_mod>(l) * p);
-    }
-    template<typename T>
-    friend modular_int operator / (const T &l, const modular_int<_mod> &p)
-    {
-        return (modular_int<_mod>(l) / p);
-    }
+//
+template <int MOD_>
+struct modnum {
+	static constexpr int MOD = MOD_;
+	static_assert(MOD_ > 0, "MOD must be positive");
 
-    int value() const
-    {
-        return x;
-    }
-    modular_int operator ^ (const modular_int<_mod> &cpower) const
-    {
-        modular_int<_mod> ans;
-        ans.x = 1;
-        modular_int<_mod> curr(this);
-        int power = cpower.x;
+  private:
+	int v;
+	static int inv(int a, int m) {
+		a %= m;
+		if (a < 0) {
+			a += m;
+		}
+		int b = m, u = 0, v = 1;
+		while (a) {
+			int t = b / a;
+			b -= t * a;
+			swap(a, b);
+			u -= t * v;
+			swap(u, v);
+		}
+		assert(b == 1);
+		if (u < 0) {
+			u += m;
+		}
+		return u;
+	}
 
-        if (curr.x <= 1)
-        {
-            if (power == 0) curr.x = 1;
-            return curr;
-        }
-        while ( power > 0)
-        {
-            if (power & 1)
-            {
-                ans *= curr;
-            }
-            power >>= 1;
-            if (power) curr *= curr;
-        }
-        return ans;
-    }
-    modular_int operator ^ (long long power) const
-    {
-        modular_int<_mod> ans;
-        ans.x = 1;
-        modular_int<_mod> curr(this);
-        if (curr.x <= 1)
-        {
-            if (power == 0) curr.x = 1;
-            return curr;
-        }
-        // Prime Mods
-        if (power >= _mod && is_prime)
-        {
-            power %= (_mod - 1);
-        }
+  public:
+	modnum() : v(0) {}
 
-        while ( power > 0)
-        {
-            if (power & 1)
-            {
-                ans *= curr;
-            }
-            power >>= 1;
-            if (power) curr *= curr;
+	modnum(int64_t v_) : v(int(v_ % MOD)) {
+		if (v < 0) {
+			v += MOD;
+		}
+	}
 
-        }
-        return ans;
-    }
-    modular_int operator ^ (int power) const
-    {
-        modular_int<_mod> ans;
-        ans.x = 1;
-        modular_int<_mod> curr(this);
-        if (curr.x <= 1)
-        {
-            if (power == 0) curr.x = 1;
-            return curr;
-        }
-        while ( power > 0)
-        {
-            if (power & 1)
-            {
-                ans *= curr;
-            }
-            power >>= 1;
-            if (power) curr *= curr;
-        }
-        return ans;
-    }
-    template<typename T>
-    modular_int &operator ^= (T power)
-    {
-        modular_int<_mod> res = (*this)^power;
-        x = res.x;
-        return *this;
-    }
-    template<typename T>
-    modular_int pow(T x)
-    {
-        return (*this)^x;
-    }
-    pair<long long, long long> gcd(const int a, const int b) const
-    {
-        if (b == 0) return {1, 0};
-        pair<long long, long long> c = gcd(b, a % b);
-        return { c.second, c.first - (a / b) *c.second};
-    }
-    inline void init_inverse_list() const
-    {
-        vector<int> &dp = modular_int<_mod>::inverse_list;
-        dp.resize(modular_int<_mod>::inverse_limit + 1);
-        int n = modular_int<_mod>::inverse_limit;
-        dp[0] = 1;
-        if (n > 1) dp[1] = 1;
-        for (int i = 2; i <= n; ++i)
-        {
-            dp[i] = (dp[_mod % i] * 1ull * (_mod - _mod / i)) % _mod;
-        }
-    }
-    modular_int<_mod> get_inv() const
-    {
-        if (modular_int<_mod>::inverse_list.size() < modular_int<_mod>::inverse_limit + 1) init_inverse_list();
-        if (this->x <= modular_int<_mod>::inverse_limit)
-        {
-            return modular_int<_mod>::inverse_list[this->x];
-        }
-        pair<long long, long long> G = gcd(this->x, _mod);
-        return modular_int<_mod>(G.first);
-    }
-    modular_int<_mod> operator - () const
-    {
-        modular_int<_mod> v(0);
-        v -= (*this);
-        return v;
-    }
-    modular_int operator / (const modular_int<_mod> &m) const
-    {
-        modular_int<_mod> U(this);
-        U *= m.get_inv();
-        return U;
-    }
-    modular_int &operator /= (const modular_int<_mod> &m)
-    {
-        (*this) *= m.get_inv();
-        return *this;
-    }
-    bool operator==(const modular_int<_mod> &m) const
-    {
-        return x == m.x;
-    }
-    bool operator < (const modular_int<_mod> &m) const
-    {
-        return x < m.x;
-    }
-    template<typename T>
-    bool operator == (const T &m) const
-    {
-        return (*this) == (modular_int<_mod>(m));
-    }
-    template<typename T>
-    bool operator < (const T &m) const
-    {
-        return x < (modular_int<_mod>(m)).x;
-    }
-    template<typename T>
-    bool operator > (const T &m) const
-    {
-        return x > (modular_int<_mod>(m)).x;
-    }
-    template<typename T>
-    friend bool operator == (const T &x, const modular_int<_mod> &m)
-    {
-        return (modular_int<_mod>(x)).x == m.x;
-    }
-    template<typename T>
-    friend bool operator < (const T &x, const modular_int<_mod> &m)
-    {
-        return (modular_int<_mod>(x)).x < m.x;
-    }
-    template<typename T>
-    friend bool operator > (const T &x, const modular_int<_mod> &m)
-    {
-        return (modular_int<_mod>(x)).x > m.x;
-    }
-    friend istream &operator >> (istream &is, modular_int<_mod> &p)
-    {
-        int64_t val;
-        is >> val;
-        p.x = (val % _mod);
-        if (p.x < 0) p.x += _mod;
-        return is;
-    }
-    friend ostream &operator << (ostream &os, const modular_int<_mod> &p)
-    {
-        return os << p.x;
-    }
+	explicit operator int() const {
+		return v;
+	}
+
+	friend std::ostream& operator << (std::ostream& out, const modnum& n) {
+		return out << int(n);
+	}
+
+	friend std::istream& operator >> (std::istream& in, modnum& n) {
+		int64_t v_;
+		in >> v_;
+		n = modnum(v_);
+		return in;
+	}
+
+	friend bool operator == (const modnum& a, const modnum& b) {
+		return a.v == b.v;
+	}
+
+	friend bool operator != (const modnum& a, const modnum& b) {
+		return a.v != b.v;
+	}
+
+	modnum inv() const {
+		modnum res;
+		res.v = inv(v, MOD);
+		return res;
+	}
+
+	friend modnum inv(const modnum& m) {
+		return m.inv();
+	}
+
+	modnum neg() const {
+		modnum res;
+		res.v = v ? MOD - v : 0;
+		return res;
+	}
+
+	friend modnum neg(const modnum& m) {
+		return m.neg();
+	}
+
+	modnum operator- () const {
+		return neg();
+	}
+
+	modnum operator+ () const {
+		return modnum(*this);
+	}
+
+	modnum& operator ++ () {
+		v ++;
+		if (v == MOD) {
+			v = 0;
+		}
+		return *this;
+	}
+
+	modnum& operator -- () {
+		if (v == 0) {
+			v = MOD;
+		}
+		v --;
+		return *this;
+	}
+
+	modnum& operator += (const modnum& o) {
+		v -= MOD - o.v;
+		v = (v < 0) ? v + MOD : v;
+		return *this;
+	}
+
+	modnum& operator -= (const modnum& o) {
+		v -= o.v;
+		v = (v < 0) ? v + MOD : v;
+		return *this;
+	}
+
+	modnum& operator *= (const modnum& o) {
+		v = int(int64_t(v) * int64_t(o.v) % MOD);
+		return *this;
+	}
+
+	modnum& operator /= (const modnum& o) {
+		return *this *= o.inv();
+	}
+
+	friend modnum operator ++ (modnum& a, int) {
+		modnum r = a;
+		++a;
+		return r;
+	}
+
+	friend modnum operator -- (modnum& a, int) {
+		modnum r = a;
+		--a;
+		return r;
+	}
+
+	friend modnum operator + (const modnum& a, const modnum& b) {
+		return modnum(a) += b;
+	}
+
+	friend modnum operator - (const modnum& a, const modnum& b) {
+		return modnum(a) -= b;
+	}
+
+	friend modnum operator * (const modnum& a, const modnum& b) {
+		return modnum(a) *= b;
+	}
+
+	friend modnum operator / (const modnum& a, const modnum& b) {
+		return modnum(a) /= b;
+	}
 };
-const int mod = (int)1e9 + 7;
-using mint = modular_int<mod>;
-template<const int mod>
-vector<int> modular_int<mod>::inverse_list;
-template<const int mod>
-const int modular_int<mod>::inverse_limit = -1;
-template<const int mod>
-const bool modular_int<mod>::is_prime = true;
+
+template <typename T>
+T power(T a, long long b) {
+	assert(b >= 0);
+	T r = 1;
+	while (b) {
+		if (b & 1) {
+			r *= a;
+		}
+		b >>= 1;
+		a *= a;
+	}
+	return r;
+}
+
+const int mod = int(1e9) + 7;
+using mint = modnum<mod>;

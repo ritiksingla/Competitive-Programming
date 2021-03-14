@@ -1,14 +1,14 @@
 // Eulerian Tour
 //
 template <typename T>
-vector<int> find_eulerian_path(const graph<T> &g, int &root) {
+vector<int> find_eulerian_path(const graph<T>& g, int& root) {
     // in_deg and out_deg are fake for undigraph!
     vector<int> in_deg(g.n, 0);
     vector<int> out_deg(g.n, 0);
     int cnt_edges = 0;
     for (int id = 0; id < (int) g.edges.size(); id++) {
         cnt_edges++;
-        auto &e = g.edges[id];
+        auto& e = g.edges[id];
         out_deg[e.from]++;
         in_deg[e.to]++;
     }
@@ -53,7 +53,7 @@ vector<int> find_eulerian_path(const graph<T> &g, int &root) {
             }
             used[id] = true;
             res[stack_ptr++] = id;
-            auto &e = g.edges[id];
+            auto& e = g.edges[id];
             balance[v]++;
             v ^= e.from ^ e.to;
             balance[v]--;
@@ -66,7 +66,7 @@ vector<int> find_eulerian_path(const graph<T> &g, int &root) {
             }
             int id = res[--stack_ptr];
             res[--write_ptr] = id;
-            auto &e = g.edges[id];
+            auto& e = g.edges[id];
             v ^= e.from ^ e.to;
         }
     }

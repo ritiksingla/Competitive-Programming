@@ -1,81 +1,65 @@
 // Ford Fulkerson
-// 
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-using ld = long double;
-const int maxn = 2e2 + 5;
-int n;
-ll c[maxn][maxn], f[maxn][maxn];
-int used[maxn], p[maxn];
-int timer;
-bool bfs(int s, int t)
-{
-    queue<int>q;
-    q.push(s);
-    while(!q.empty())
-    {
-        int u = q.front();
-        q.pop();
-        if(u == t)
-            return true;
-        for(int i = 0; i < n; i++)
-        {
-            if(used[i] != timer && f[u][i] < c[u][i])
-            {
-                used[i] = timer;
-                q.push(i);
-                p[i] = u;
-            }
-        }
-    }
-    return false;
-}
-int32_t main()
-{
-    ios::sync_with_stdio(false);
-    cin.tie(0);
-    int tt;
-    cin >> tt;
-    while(tt--)
-    {
-        cin >> n;
-        ll max_flow = 0;
-        timer = 1;
-        memset(c, 0, sizeof c);
-        memset(f, 0, sizeof f);
-        memset(used, 0, sizeof used);
-        for(int i = 0; i < n - 1; i++)
-        {
-            int m;
-            cin >> m;
-            for(int j = 0; j < m; j++)
-            {
-                int u;
-                cin >> u;
-                u--;
-                if(i == 0 || u == n - 1)
-                    c[i][u] += 1;
-                else
-                    c[i][u] = 1e9;
-            }
-        }
-        while(bfs(0, n - 1))
-        {
-            timer++;
-            ll mn = numeric_limits<ll>::max();
-            for(int i = n - 1; i; i = p[i])
-            {
-                mn = min(mn, c[p[i]][i] - f[p[i]][i]);
-            }
-            for(int i = n - 1; i; i = p[i])
-            {
-                f[p[i]][i] += mn;
-                f[i][p[i]] -= mn;
-            }
-            max_flow += mn;
-        }
-        cout << max_flow << "\n";
-    }
-}
-// https://www.spoj.com/problems/POTHOLE
+//
+template<typename T>
+class ford_fulkerson {
+
+  private:
+	flow_graph<T>g;
+	vector<int>pe;
+	vector<int>q;
+	vector<int>was;
+	int attempt;
+
+  public:
+	ford_fulkerson(const flow_graph<T>& g_): g(g_) {
+		attempt = 0;
+		was.resize(g.n);
+		pe.resize(g.n);
+		q.resize(g.n);
+	}
+
+	bool bfs() {
+		attempt++;
+		q[0] = g.st;
+		pe[g.st] = -1;
+		was[g.st] = attempt;
+		int beg = 0, end = 1;
+		while (beg < end) {
+			int u = q[beg++];
+			for (int id : g.g[u]) {
+				const auto& e = g.edges[id];
+				if (was[e.to] != attempt && e.c - e.f > g.eps) {
+					pe[e.to] = id;
+					was[e.to] = attempt;
+					if (e.to == g.fin) {
+						return true;
+					}
+					q[end++] = e.to;
+				}
+			}
+		}
+		return false;
+	}
+
+	T max_flow() {
+		while (bfs()) {
+			T delta = numeric_limits<T>::max();
+			int id = pe[g.fin];
+			while (id != -1) {
+				const auto& e = g.edges[id];
+				delta = min(delta, e.c - e.f);
+				id = pe[e.from];
+			}
+			id = pe[g.fin];
+			while (id != -1) {
+				auto& e = g.edges[id];
+				auto& back = g.edges[id ^ 1];
+				e.f += delta;
+				back.f -= delta;
+				id = pe[e.from];
+			}
+			g.flow += delta;
+		}
+		return g.flow;
+	}
+};

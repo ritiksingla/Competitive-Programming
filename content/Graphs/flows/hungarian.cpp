@@ -1,11 +1,11 @@
 // Hungarian
-// 
+//
 template<typename T>
 class hungarian {
-public:
+  public:
 	int n;
 	int m;
-	vector< vector<T> > a;
+	vector<vector<T>> a;
 	vector<T> u;
 	vector<T> v;
 	vector<int> pa;
@@ -17,7 +17,7 @@ public:
 
 	hungarian(int _n, int _m) : n(_n), m(_m) {
 		assert(n <= m);
-		a = vector< vector<T> >(n, vector<T>(m));
+		a = vector<vector<T>>(n, vector<T>(m));
 		u = vector<T>(n + 1);
 		v = vector<T>(m + 1);
 		pa = vector<int>(n + 1, -1);

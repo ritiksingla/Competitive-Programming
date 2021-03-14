@@ -9,12 +9,12 @@
 
 template<typename T>
 class linear_diophantine :  public linear_equations<T> {
-protected:
+  protected:
 	using linear_equations<T>::A;
 	using linear_equations<T>::B;
 	using linear_equations<T>::gcd;
 	using linear_equations<T>::extended_gcd;
-public:
+  public:
 	T C;
 	linear_diophantine(T A_, T B_, T C_): linear_equations<T>(A_, B_) {
 		C = C_;
@@ -29,8 +29,12 @@ public:
 		vector<T> solution;
 		x *= C / g;
 		y *= C / g;
-		if (A < 0) x = -x;
-		if (B < 0) y = -y;
+		if (A < 0) {
+			x = -x;
+		}
+		if (B < 0) {
+			y = -y;
+		}
 		assert(A * x + B * y == C);
 		solution.push_back(x);
 		solution.push_back(y);
@@ -57,9 +61,9 @@ public:
 			return 0;
 		}
 		T solution = -C / coef;
-		return (T) (solution >= lower && solution <= upper) ? 1 : 0;
+		return (T)(solution >= lower && solution <= upper) ? 1 : 0;
 	}
-	void shift_solution(T & x, T & y, T a, T b, T cnt) {
+	void shift_solution(T& x, T& y, T a, T b, T cnt) {
 		x += cnt * b;
 		y -= cnt * a;
 	}
@@ -96,38 +100,45 @@ public:
 
 		// Find lx1
 		shift_solution(x, y, u, v, (lx - x) / v);
-		if (x < lx)
+		if (x < lx) {
 			shift_solution(x, y, u, v, sign_b);
+		}
 		T lx1 = x;
 
 		// Find rx1
 		shift_solution(x, y, u, v, (rx - x) / v);
-		if (x > rx)
+		if (x > rx) {
 			shift_solution(x, y, u, v, -sign_b);
+		}
 		T rx1 = x;
 
-		if (lx1 > rx1)
+		if (lx1 > rx1) {
 			swap(lx1, rx1);
+		}
 
 		// Find lx2
 		shift_solution(x, y, u, v, -(ly - y) / u);
-		if (y < ly)
+		if (y < ly) {
 			shift_solution(x, y, u, v, -sign_a);
+		}
 		T lx2 = x;
 
 		// Find rx2
 		shift_solution(x, y, u, v, -(ry - y) / u);
-		if (y > ry)
+		if (y > ry) {
 			shift_solution(x, y, u, v, sign_a);
+		}
 		T rx2 = x;
 
-		if (lx2 > rx2)
+		if (lx2 > rx2) {
 			swap(lx2, rx2);
+		}
 		T l = max(lx1, lx2);
 		T r = min(rx1, rx2);
 
-		if (l > r)
+		if (l > r) {
 			return 0;
+		}
 		return (r - l) / abs(v) + 1;
 	}
 };

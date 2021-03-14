@@ -7,16 +7,18 @@ long long solve(int idx, int taken, bool not_tight) {
 	if (idx == sz) {
 		return 1;
 	}
-	long long &ans = dp[idx][taken][not_tight];
+	long long& ans = dp[idx][taken][not_tight];
 	if (ans != -1) {
 		return ans;
 	}
 	ans = 0;
 	int lo = 0, hi = 9;
-	if (!not_tight)
+	if (!not_tight) {
 		hi = num[idx];
-	for (int i = lo; i <= hi; ++i)
+	}
+	for (int i = lo; i <= hi; ++i) {
 		ans += solve(idx + 1, taken + i, (not_tight | i < num[idx]));
+	}
 	return ans;
 }
 long long f(long long x) {

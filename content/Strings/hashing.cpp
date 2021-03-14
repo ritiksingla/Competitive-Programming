@@ -38,7 +38,9 @@ struct str_hash {
 		if (l) {
 			res = res - Hash[l - 1] * Powers[r - (l - 1)] % MOD_;
 		}
-		if (res < 0) res += MOD_;
+		if (res < 0) {
+			res += MOD_;
+		}
 		return res;
 	}
 

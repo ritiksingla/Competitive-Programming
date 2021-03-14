@@ -1,8 +1,8 @@
 // Least Common Ancestor Forest
-// 
+//
 template <typename T>
 class lca_forest : public dfs_forest<T> {
-public:
+  public:
 	using dfs_forest<T>::edges;
 	using dfs_forest<T>::g;
 	using dfs_forest<T>::n;
@@ -65,8 +65,9 @@ public:
 		if (anc(y, x)) {
 			return y;
 		}
-		if (depth[x] > depth[y])
+		if (depth[x] > depth[y]) {
 			swap(x, y);
+		}
 		for (int j = h - 1; j >= 0; j--) {
 			if (pr[x][j] != -1 && !anc(pr[x][j], y)) {
 				x = pr[x][j];

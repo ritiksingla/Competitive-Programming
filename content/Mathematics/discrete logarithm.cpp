@@ -4,9 +4,9 @@
 // Solution does not always exists
 template<typename T>
 class discrete_logarithm {
-private:
+  private:
 	T A, B, M;
-public:
+  public:
 	discrete_logarithm(T A_, T B_, T M_): A(A_), B(B_), M(M_) {}
 
 	// Time: O(sqrt(M))
@@ -16,8 +16,12 @@ public:
 		T K = 1, add{};
 		T g = __gcd(A, M);
 		while (g > 1) {
-			if (B == K) return add;
-			if (B % g != 0) return -1;
+			if (B == K) {
+				return add;
+			}
+			if (B % g != 0) {
+				return -1;
+			}
 			B /= g, M /= g;
 			add++;
 			K = (K * 1ll * A / g) % M;
@@ -25,8 +29,9 @@ public:
 		}
 		T N = sqrt(M) + 1;
 		T an = 1;
-		for (T i = 0; i < N; ++i)
+		for (T i = 0; i < N; ++i) {
 			an = (an * 1ll * A) % M;
+		}
 
 		unordered_map<T, T> vals;
 		vals.reserve(N + 1);

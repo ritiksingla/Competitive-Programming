@@ -2,7 +2,7 @@
 //
 template<typename T>
 class Sort {
-private:
+  private:
 	int N;
 	vector<T>A;
 
@@ -12,8 +12,8 @@ private:
 		}
 	}
 
-public:
-	Sort(const vector<T>&_A) {
+  public:
+	Sort(const vector<T>& _A) {
 		A = _A;
 		N = (int)A.size();
 	}
@@ -56,8 +56,7 @@ public:
 		for (; l <= mid && r <= hi;) {
 			if (A[l] <= A[r]) {
 				b[idx++] = A[l++];
-			}
-			else {
+			} else {
 				b[idx++] = A[r++];
 			}
 		}
@@ -76,7 +75,9 @@ public:
 	}
 
 	void mergeSort(int lo, int hi) {
-		if (lo >= hi) return;
+		if (lo >= hi) {
+			return;
+		}
 		int mid = (lo + (hi - lo) / 2);
 
 		mergeSort(lo, mid);
@@ -94,11 +95,13 @@ public:
 		int l = 2 * idx + 1;
 		int r = 2 * idx + 2;
 
-		if (l < n && A[l] > A[maxi])
+		if (l < n && A[l] > A[maxi]) {
 			maxi = l;
+		}
 
-		if (r < n && A[r] > A[maxi])
+		if (r < n && A[r] > A[maxi]) {
 			maxi = r;
+		}
 
 		if (maxi != idx) {
 			swap(A[maxi], A[idx]);
@@ -121,11 +124,13 @@ public:
 		int l = 2 * idx + 1;
 		int r = 2 * idx + 2;
 
-		if (l < n && A[l] < A[mini])
+		if (l < n && A[l] < A[mini]) {
 			mini = l;
+		}
 
-		if (r < n && A[r] < A[mini])
+		if (r < n && A[r] < A[mini]) {
 			mini = r;
+		}
 
 		if (mini != idx) {
 			swap(A[idx], A[mini]);
@@ -149,8 +154,9 @@ public:
 			int mini = i;
 
 			for (int j = i + 1; j < N; j++) {
-				if (A[j] < A[mini])
+				if (A[j] < A[mini]) {
 					mini = j;
+				}
 			}
 			swap(A[mini], A[i]);
 		}
@@ -220,7 +226,9 @@ public:
 		random_shuffle(begin(A), end(A));
 	}
 	void show() {
-		for (auto &a : A) cout << a << ' ';
+		for (auto& a : A) {
+			cout << a << ' ';
+		}
 		cout << '\n';
 	}
 };

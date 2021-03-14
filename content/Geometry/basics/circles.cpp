@@ -1,48 +1,39 @@
 // Circles
-// 
-struct Point
-{
-    ld x, y;
-    Point(ld px, ld py)
-    {
+//
+struct Point {
+    long double x, y;
+    Point(long double px, long double py) {
         x = px;
         y = py;
     }
-    Point sub(Point p2)
-    {
+    Point sub(Point p2) {
         return Point(x - p2.x, y - p2.y);
     }
-    Point add(Point p2)
-    {
+    Point add(Point p2) {
         return Point(x + p2.x, y + p2.y);
     }
-    ld distance(Point p2)
-    {
+    long double distance(Point p2) {
         return sqrt((x - p2.x) * (x - p2.x) + (y - p2.y) * (y - p2.y));
     }
-    Point normal()
-    {
-        ld length = sqrt(x * x + y * y);
+    Point normal() {
+        long double length = sqrt(x * x + y * y);
         return Point(x / length, y / length);
     }
-    Point scale(ld s)
-    {
+    Point scale(long double s) {
         return Point(x * s, y * s);
     }
 };
-struct circle
-{
-    ld x, y, r;
-    pair<Point, Point> intersections(circle c)
-    {
+struct circle {
+    long double x, y, r;
+    pair<Point, Point> intersections(circle c) {
         Point P0(x, y);
         Point P1(c.x, c.y);
-        ld d, a, h;
+        long double d, a, h;
         d = P0.distance(P1);
         a = (r * r - c.r * c.r + d * d) / (2 * d);// Distance from P0 of axis of intersection
         h = sqrt(r * r - a * a);// Height of point above a
         Point P2 = P1.sub(P0).scale(a / d).add(P0);//Line Ratio Theorem
-        ld x3, y3, x4, y4;
+        long double x3, y3, x4, y4;
         x3 = P2.x + h * (P1.y - P0.y) / d;
         y3 = P2.y - h * (P1.x - P0.x) / d;
         x4 = P2.x - h * (P1.y - P0.y) / d;

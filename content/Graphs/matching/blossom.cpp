@@ -14,10 +14,14 @@ void contract(int u, int v, bool first = 1) {
         int k = u; l = v;
         while (1) {
             teve[k = base[k]] = 1;
-            if (match[k] == -1) break;
+            if (match[k] == -1) {
+                break;
+            }
             k = parent[match[k]];
         }
-        while (!teve[l = base[l]]) l = parent[match[l]];
+        while (!teve[l = base[l]]) {
+            l = parent[match[l]];
+        }
     }
     while (base[u] != l) {
         blossom[base[u]] = blossom[base[match[u]]] = 1;
@@ -25,27 +29,37 @@ void contract(int u, int v, bool first = 1) {
         v = match[u];
         u = parent[match[u]];
     }
-    if (!first) return;
+    if (!first) {
+        return;
+    }
     contract(v, u, 0);
     for (int i = 0; i < n; i++) if (blossom[base[i]]) {
             base[i] = l;
-            if (!vis[i]) q.push(i);
+            if (!vis[i]) {
+                q.push(i);
+            }
             vis[i] = 1;
         }
 }
 
 int getpath(int s) {
-    for (int i = 0; i < n; i++) base[i] = i, parent[i] = -1, vis[i] = 0;
+    for (int i = 0; i < n; i++) {
+        base[i] = i, parent[i] = -1, vis[i] = 0;
+    }
     vis[s] = 1; q = queue<int>(); q.push(s);
     while (q.size()) {
         int u = q.front(); q.pop();
         for (int v : g[u]) {
-            if (base[v] == base[u] or match[u] == v) continue;
-            if (v == s or (match[v] != -1 and parent[match[v]] != -1))
+            if (base[v] == base[u] or match[u] == v) {
+                continue;
+            }
+            if (v == s or (match[v] != -1 and parent[match[v]] != -1)) {
                 contract(u, v);
-            else if (parent[v] == -1) {
+            } else if (parent[v] == -1) {
                 parent[v] = u;
-                if (match[v] == -1) return v;
+                if (match[v] == -1) {
+                    return v;
+                }
                 v = match[v];
                 vis[v] = 1; q.push(v);
             }
@@ -66,7 +80,9 @@ int blossom() {
                 }
     for (int i = 0; i < n; i++) if (match[i] == -1) {
             int j = getpath(i);
-            if (j == -1) continue;
+            if (j == -1) {
+                continue;
+            }
             ans++;
             while (j != -1) {
                 int p = parent[j], pp = match[p];

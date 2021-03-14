@@ -9,13 +9,13 @@
 template <typename T, class F = function<T(const T&, const T&)>>
 struct sparse_table {
 
-private:
+  private:
 	int N;
 	vector<vector<T>> mat;
 	F func;
 	int max_log;
 
-public:
+  public:
 	sparse_table() {}
 
 	sparse_table(const vector<T>& a, const F& f) : func(f) {

@@ -2,28 +2,30 @@
 //
 template<typename String>
 struct suffix_array {
-public:
+  public:
 	String S;
 	int N;
 	sparse_table<int>ST;
 	vector<int> sa, rank, lcp;
- 
+
 	suffix_array(const String& S_): S(S_), N(int(S.size())) {
 		build_sa();
 		build_rank();
 		build_lcp();
 		build_rmq();
 	}
- 
+
 	int get_lcp(int a, int b) const {
-		if (a == b) return N - a;
+		if (a == b) {
+			return N - a;
+		}
 		a = rank[a], b = rank[b];
 		if (a > b) {
 			swap(a, b);
 		}
 		return ST.get_idempotent(a, b - 1);
 	}
- 
+
 	int compare(int a, int b, int length) const {
 		if (a == b) {
 			return 0;
@@ -37,8 +39,8 @@ public:
 		}
 		return S[a + common] < S[b + common] ? -1 : (S[a + common] == S[b + common] ? 0 : 1);
 	}
- 
-private:
+
+  private:
 	const int alphabet_size = 256;
 	void build_sa() {
 		sa.resize(N);
@@ -58,7 +60,7 @@ private:
 			}
 		};
 		init();
- 
+
 		vector<int> sorted_by_second(N);
 		vector<int> ptr_group(N);
 		vector<int> new_group(N);
@@ -107,7 +109,7 @@ private:
 			rank[sa[i]] = i;
 		}
 	}
- 
+
 	void build_lcp() {
 		assert(int(sa.size()) == N);
 		lcp.resize(N);
@@ -129,7 +131,7 @@ private:
 			return min(i, j);
 		});
 	}
-public:
+  public:
 	int lower_bound(const String& P) const {
 		int M = int(P.size());
 		auto check = [&](const int m) {

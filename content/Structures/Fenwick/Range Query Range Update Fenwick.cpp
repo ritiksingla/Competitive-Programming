@@ -2,11 +2,11 @@
 //
 template<typename T>
 class range_fenwick {
-private:
+  private:
 	int N;
-	fenwick<T>*B1, *B2;
-public:
-	range_fenwick(const int &N_): N(N_) {
+	fenwick<T>* B1, *B2;
+  public:
+	range_fenwick(const int& N_): N(N_) {
 		B1 = new fenwick<T>(N);
 		B2 = new fenwick<T>(N);
 	}

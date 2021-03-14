@@ -29,8 +29,7 @@ struct Knapsack {
     element we move on jth column in previous row. So here we can observe that at
     a time we are working only with 2 consecutive rows.
     */
-    T optimized_space_iterative()
-    {
+    T optimized_space_iterative() {
         vector<T>dp(C + 1, 0);
         for (int i = 0; i < N; i++) {
             for (int j = C; j >= weights[i]; j--) {
@@ -39,14 +38,17 @@ struct Knapsack {
         }
         return dp[C];
     }
-    T bottom_to_top_recursive(int idx, int taken, vector<vector<T>>&dp) {
-        if (taken < 0)
+    T bottom_to_top_recursive(int idx, int taken, vector<vector<T>>& dp) {
+        if (taken < 0) {
             return numeric_limits<T>::min();
-        if (taken == 0 || idx == 0)
+        }
+        if (taken == 0 || idx == 0) {
             return 0;
-        T &ans = dp[idx][taken];
-        if (ans != -1)
+        }
+        T& ans = dp[idx][taken];
+        if (ans != -1) {
             return ans;
+        }
         ans = 0;
         T exclude = bottom_to_top_recursive(idx - 1, taken, dp);
         T include = bottom_to_top_recursive(idx - 1, taken - weights[idx - 1], dp) + values[idx - 1];
@@ -57,14 +59,17 @@ struct Knapsack {
         vector<vector<T>>dp(N + 1, vector<T>(C + 1, -1));
         return bottom_to_top_recursive(N, C, dp);
     }
-    T top_to_bottom_recursive(int idx, int taken, vector<vector<T>>&dp) {
-        if (taken > C)
+    T top_to_bottom_recursive(int idx, int taken, vector<vector<T>>& dp) {
+        if (taken > C) {
             return numeric_limits<T>::min();
-        if (taken == C || idx == N)
+        }
+        if (taken == C || idx == N) {
             return 0;
-        T &ans = dp[idx][taken];
-        if (ans != -1)
+        }
+        T& ans = dp[idx][taken];
+        if (ans != -1) {
             return ans;
+        }
         ans = 0;
         T exclude = top_to_bottom_recursive(idx + 1, taken, dp);
         T include = top_to_bottom_recursive(idx + 1, taken + weights[idx], dp) + values[idx];

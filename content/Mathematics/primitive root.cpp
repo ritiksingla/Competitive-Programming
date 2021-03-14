@@ -12,9 +12,9 @@
 // Number of primitive root mod N = euler_totient(euler_totient(N)) or none.
 template<typename T>
 class primitive_root {
-private:
+  private:
 	T N;
-public:
+  public:
 	primitive_root(T N_): N(N_) {}
 	vector<T> solve(int limit = 10) {
 		vector<T> fact;
@@ -25,12 +25,14 @@ public:
 		T n = phi;
 		for (T i = 2; i * i <= n; ++i)
 			if (n % i == 0) {
-				fact.push_back (i);
-				while (n % i == 0)
+				fact.push_back(i);
+				while (n % i == 0) {
 					n /= i;
+				}
 			}
-		if (n > 1)
-			fact.push_back (n);
+		if (n > 1) {
+			fact.push_back(n);
+		}
 
 		modular<T>M(N);
 		for (T res = 2; res <= N; ++res) {

@@ -1,35 +1,3 @@
-#include <bits/stdc++.h>
-using namespace std;
-template<typename T>
-ostream &operator<<(ostream &os, vector<T>v)
-{
-    os << "[ ";
-    for(auto it : v)
-        os << it << " ";
-    return os << "]";
-}
-void debug()
-{
-    cerr << "\n";
-}
-template<typename Head, typename... Tail>
-void debug(Head H, Tail... T)
-{
-    cerr << H << " ";
-    debug(T...);
-}
-#define debug(...) cerr<<"["<<#__VA_ARGS__<<"] : ";debug(__VA_ARGS__);
-void console()
-{
-    cout << "\n";
-}
-template<typename Head, typename... Tail>
-void console(Head H, Tail... T)
-{
-    cout << H << " ";
-    console(T...);
-}
-#define console(...) cout<<"["<<#__VA_ARGS__<<"] : ";console(__VA_ARGS__);
 class A
 {
     int x, y;

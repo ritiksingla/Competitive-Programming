@@ -1,33 +1,33 @@
 // Dinic
-// 
+//
 template <typename T>
 class dinic {
-public:
-	flow_graph<T> &g;
+  public:
+	flow_graph<T>& g;
 
 	vector<int> ptr;
-	vector<int> d;
-	vector<int> q;
+	vector<int> level;
+	vector<int>q;
 
-	dinic(flow_graph<T> &_g) : g(_g) {
+	dinic(flow_graph<T>& _g) : g(_g) {
 		ptr.resize(g.n);
-		d.resize(g.n);
+		level.resize(g.n);
 		q.resize(g.n);
 	}
 
-	bool expath() {
-		fill(d.begin(), d.end(), -1);
-		q[0] = g.fin;
-		d[g.fin] = 0;
+	bool bfs() {
+		fill(level.begin(), level.end(), -1);
+		q[0] = g.st;
+		level[g.st] = 0;
 		int beg = 0, end = 1;
 		while (beg < end) {
-			int i = q[beg++];
-			for (int id : g.g[i]) {
-				const auto &e = g.edges[id];
-				const auto &back = g.edges[id ^ 1];
-				if (back.c - back.f > g.eps && d[e.to] == -1) {
-					d[e.to] = d[i] + 1;
-					if (e.to == g.st) {
+			int u = q[beg++];
+			for (int id : g.g[u]) {
+				const auto& e = g.edges[id];
+				const auto& back = g.edges[id ^ 1];
+				if (e.c - e.f > g.eps && level[e.to] == -1) {
+					level[e.to] = level[u] + 1;
+					if (e.to == g.fin) {
 						return true;
 					}
 					q[end++] = e.to;
@@ -41,11 +41,11 @@ public:
 		if (v == g.fin) {
 			return w;
 		}
-		int &j = ptr[v];
-		while (j >= 0) {
+		int& j = ptr[v];
+		while (j < int(g.g[v].size())) {
 			int id = g.g[v][j];
-			const auto &e = g.edges[id];
-			if (e.c - e.f > g.eps && d[e.to] == d[v] - 1) {
+			const auto& e = g.edges[id];
+			if (e.c - e.f > g.eps && level[e.to] == level[v] + 1) {
 				T t = dfs(e.to, min(e.c - e.f, w));
 				if (t > g.eps) {
 					g.edges[id].f += t;
@@ -53,16 +53,14 @@ public:
 					return t;
 				}
 			}
-			j--;
+			j++;
 		}
 		return 0;
 	}
 
 	T max_flow() {
-		while (expath()) {
-			for (int i = 0; i < g.n; i++) {
-				ptr[i] = (int) g.g[i].size() - 1;
-			}
+		while (bfs()) {
+			fill(ptr.begin(), ptr.end(), 0);
 			T big_add = 0;
 			while (true) {
 				T add = dfs(g.st, numeric_limits<T>::max());
@@ -83,7 +81,7 @@ public:
 		max_flow();
 		vector<bool> ret(g.n);
 		for (int i = 0; i < g.n; i++) {
-			ret[i] = (d[i] != -1);
+			ret[i] = (level[i] != -1);
 		}
 		return ret;
 	}

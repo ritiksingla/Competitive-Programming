@@ -1,8 +1,8 @@
 // DFS Undigraph
-// 
+//
 template <typename T>
 class dfs_undigraph : public undigraph<T> {
-public:
+  public:
 	using undigraph<T>::edges;
 	using undigraph<T>::g;
 	using undigraph<T>::n;
@@ -52,7 +52,7 @@ public:
 		was.clear();
 	}
 
-private:
+  private:
 	void do_dfs(int v) {
 		was[v] = attempt;
 		pos[v] = (int) order.size();
@@ -63,7 +63,7 @@ private:
 			if (id == pe[v]) {
 				continue;
 			}
-			auto &e = edges[id];
+			auto& e = edges[id];
 			int to = e.from ^ e.to ^ v;
 			if (was[to] == attempt) {
 				min_depth[v] = min(min_depth[v], depth[to]);
@@ -90,7 +90,7 @@ private:
 		do_dfs(v);
 	}
 
-public:
+  public:
 	void dfs(int v, bool clear_order = true) {
 		if (pv.empty()) {
 			init();

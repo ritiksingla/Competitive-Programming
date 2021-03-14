@@ -6,7 +6,7 @@
 // Faster than lazy segment tree!
 template<typename T, class F = function<T(const T&, const T&)>>
 class range_query_fenwick {
-private:
+  private:
 	vector<T>BIT1;
 	vector<T>BIT2;
 	F func;
@@ -28,7 +28,7 @@ private:
 			idx -= idx & -idx;
 		}
 	}
-public:
+  public:
 	range_query_fenwick(int N_, const T& t, const F& f, bool indexing_ = 0): N(N_ + 1), func(f), indexing(indexing_) {
 		A.resize(N + 1, t);
 		initializer = t;

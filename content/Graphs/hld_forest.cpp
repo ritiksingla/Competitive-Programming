@@ -2,7 +2,7 @@
 //
 template <typename T>
 class hld_forest : public lca_forest<T> {
-public:
+  public:
 	using lca_forest<T>::edges;
 	using lca_forest<T>::g;
 	using lca_forest<T>::n;
@@ -22,7 +22,7 @@ public:
 	hld_forest(int _n) : lca_forest<T>(_n) {
 		visited.resize(n);
 	}
-	void build_hld(const vector<int> &vs) {
+	void build_hld(const vector<int>& vs) {
 		for (int tries = 0; tries < 2; tries++) {
 			if (vs.empty()) {
 				dfs_all();
@@ -142,8 +142,7 @@ int main() {
 			g.apply_on_path(u, u, true, [&](int from, int to, bool) {
 				st.modify(from, to, v);
 			});
-		}
-		else {
+		} else {
 			int u, v;
 			cin >> u >> v;
 			--u, --v;

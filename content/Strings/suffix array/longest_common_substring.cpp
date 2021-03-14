@@ -18,7 +18,7 @@ string longest_common_substring(const string& S, const string& T) {
 	}
 	if (idx >= N) {
 		return T.substr(idx - N - 1, max_len);
-	}
-	else
+	} else {
 		return S.substr(idx, max_len);
+	}
 }

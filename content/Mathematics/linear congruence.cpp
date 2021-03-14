@@ -3,12 +3,12 @@
 // Find solutions for AX mod B = C mod B in X
 template<typename T>
 class linear_congruence {
-private:
+  private:
 	T A;
 	T B;
 	T C;
 	T gcd;
-public:
+  public:
 	linear_congruence(T A_, T B_, T C_): A(A_), B(B_), C(C_) {
 		gcd = __gcd(A, B);
 	}
@@ -16,8 +16,7 @@ public:
 		if (gcd == 1) { // Unique solution
 			modular<T>M(B);
 			return {M.mul(M.inv(A), C)};
-		}
-		else if (C % gcd == 0) { // Number of unique solutions = gcd;
+		} else if (C % gcd == 0) { // Number of unique solutions = gcd;
 			vector<T>solutions;
 			T a = A / gcd;
 			T b = B / gcd;
@@ -30,8 +29,7 @@ public:
 				solutions.emplace_back(M2.add(X, M2.mul(i, b)));
 			}
 			return solutions;
-		}
-		else {
+		} else {
 			return {}; // No solution
 		}
 	}

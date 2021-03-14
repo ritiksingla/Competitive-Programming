@@ -3,9 +3,9 @@
 // Solves X^{K} mod N = A mod N for prime N, A, K in X
 template<typename T>
 class discrete_root {
-private:
+  private:
 	T N, A, K;
-public:
+  public:
 	discrete_root(T K_, T A_, T N_) : K(K_), A(A_), N(N_)  {}
 	vector<T>solve() {
 		if (A == 0) {

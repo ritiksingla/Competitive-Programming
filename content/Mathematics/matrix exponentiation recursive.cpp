@@ -1,36 +1,31 @@
 // Matrix Exponentiation (Recursive)
-// 
+//
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
 const ll maxn = 1e5 + 5;
 constexpr ll md = 1e9 + 7;
-inline ll add(ll x, ll y)
-{
-    if(x + y >= md)
+inline ll add(ll x, ll y) {
+    if (x + y >= md) {
         return x + y - md;
+    }
     return x + y;
 }
-inline ll mul(ll x, ll y)
-{
+inline ll mul(ll x, ll y) {
     return (x * 1ll * y) % md;
 }
-inline ll sub(ll x, ll y)
-{
-    if(x < y)
+inline ll sub(ll x, ll y) {
+    if (x < y) {
         return x + md - y;
+    }
     return x - y;
 }
-void multiply( vector<vector<ll>> &a,  vector<vector<ll>>b)
-{
+void multiply(vector<vector<ll>>& a,  vector<vector<ll>>b) {
     vector<vector<ll>>c(2, vector<ll>(2, 0));
-    for(int i = 0; i < 2; i++)
-    {
-        for(int j = 0; j < 2; j++)
-        {
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
             c[i][j] = 0;
-            for(int k = 0; k < 2; k++)
-            {
+            for (int k = 0; k < 2; k++) {
                 c[i][j] = add(c[i][j], mul(a[i][k], b[k][j]));
             }
         }
@@ -38,25 +33,24 @@ void multiply( vector<vector<ll>> &a,  vector<vector<ll>>b)
     a = c;
     return;
 }
-void raise_power(vector<vector<ll>> &b, ll n)
-{
+void raise_power(vector<vector<ll>>& b, ll n) {
     vector<vector<ll>> f = b;
-    if(n == 1)
+    if (n == 1) {
         return;
+    }
     raise_power(b, n / 2);
     multiply(b, b);
-    if(n & 1)
+    if (n & 1) {
         multiply(b, f);
+    }
 }
-int32_t main()
-{
+int32_t main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
     int tt;
     cin >> tt;
-    while(tt--)
-    {
+    while (tt--) {
         ll n;
         cin >> n;
         /*

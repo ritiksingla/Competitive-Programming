@@ -2,20 +2,22 @@
 //
 template<typename T>
 struct factorizer {
-private:
+  private:
 	int precalculated = 1;
-public:
+  public:
 	vector<T> least = {0, 1};
 	vector<T> primes; // Primes can be greater than int in segmented_sieve
 	vector<bool>is_prime;
-	bool trial_division(const T &N) {
+	bool trial_division(const T& N) {
 		for (T x = 2; x * x <= N; x++) {
-			if (N % x == 0) return false;
+			if (N % x == 0) {
+				return false;
+			}
 		}
 		return true;
 	}
 	template<typename U>
-	bool miller_rabin(const U &N, const vector<U>& bases) {
+	bool miller_rabin(const U& N, const vector<U>& bases) {
 		if (N < 2) {
 			return false;
 		}
@@ -59,11 +61,11 @@ public:
 		return true;
 	}
 
-	bool miller_rabin(const int32_t &N) {
+	bool miller_rabin(const int32_t& N) {
 		return miller_rabin(N, {2, 7, 61});
 	}
 
-	bool miller_rabin(const int64_t &N) {
+	bool miller_rabin(const int64_t& N) {
 		return miller_rabin(N, {2, 325, 9375, 28178, 450775, 9780504, 1795265022});
 	}
 	// Only if you really need uint64_t version
@@ -119,7 +121,7 @@ public:
 
 	// Time: O(N*ln(ln(√N))) + O(N)
 	// Memory: O(N)
-	void slow_sieve(const T &N) {
+	void slow_sieve(const T& N) {
 		least.assign(N + 1, 0);
 		for (T i = 2; i * i <= N; i++) {
 			if (least[i] == 0) {
@@ -141,7 +143,7 @@ public:
 	}
 	// Time: O(N)
 	// Memory: O(N)
-	void linear_sieve(const T &N) {
+	void linear_sieve(const T& N) {
 		least.assign(N + 1, 0);
 		is_prime.assign(N + 1, 0);
 		primes.clear();
@@ -184,8 +186,9 @@ public:
 		for (T p : primes) {
 			for (T i = max(p * p, (l + p - 1) / p * p); i <= r; i += p) {
 				assert(i - l >= 0 && i - l <= r - l);
-				if (vis[i - l] == 0)
+				if (vis[i - l] == 0) {
 					vis[i - l] = p;
+				}
 			}
 		}
 		if (l == 1) {
@@ -198,7 +201,7 @@ public:
 			}
 		}
 	}
-	vector<pair<T, int>> merge_factors(const vector<pair<T, int>>&A, const vector<pair<T, int>>&B) {
+	vector<pair<T, int>> merge_factors(const vector<pair<T, int>>& A, const vector<pair<T, int>>& B) {
 		vector<pair<T, int>>C;
 		int i = 0;
 		int j = 0;
@@ -217,7 +220,7 @@ public:
 		}
 		return C;
 	}
-	vector<pair<T, int>> pollard_rho(const T &N, const T&c) {
+	vector<pair<T, int>> pollard_rho(const T& N, const T& c) {
 		if (N <= 1) {
 			return {};
 		}
@@ -319,7 +322,9 @@ public:
 		T res = N;
 		for (int i = 2; i * i <= N; ++i) {
 			if (N % i == 0) {
-				while (N % i == 0) N /= i;
+				while (N % i == 0) {
+					N /= i;
+				}
 				res -= res / i;
 			}
 		}
@@ -331,7 +336,7 @@ public:
 
 	// Time: O(N.log(log(N)))
 	// Count each prime's contribution only once
-	vector<int> euler_totient_one_to_n(const int &N) {
+	vector<int> euler_totient_one_to_n(const int& N) {
 		vector<int>phi(N + 1);
 		iota(begin(phi), end(phi), 0);
 		for (int i = 2; i <= N; ++i) {
@@ -346,7 +351,7 @@ public:
 
 	// Time: O(N.log(N))
 	// As ∑ (d|n) phi(d) = n by Gauss
-	vector<int> slow_euler_totient_one_to_n(const int &N) {
+	vector<int> slow_euler_totient_one_to_n(const int& N) {
 		vector<int>phi(N + 1);
 		phi[0] = 0;
 		phi[1] = 1;
@@ -359,7 +364,7 @@ public:
 		return phi;
 	}
 
-	T number_of_divisors(const T &N) {
+	T number_of_divisors(const T& N) {
 		auto v = factorize(N);
 		T res = 1;
 		for (auto x : v) {
@@ -368,7 +373,7 @@ public:
 		return res;
 	}
 
-	int64_t sum_of_divisors(const T &N) {
+	int64_t sum_of_divisors(const T& N) {
 		int64_t res = 1;
 		const int64_t MOD_ = 9223372036854775783;
 		modular<int64_t>M(MOD_);

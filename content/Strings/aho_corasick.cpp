@@ -1,166 +1,96 @@
 // Aho Corasick
-// 
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-const int K = 26;
-struct Vertex
-{
-    int next[K];
-    Vertex()
-    {
-        fill(begin(next), end(next), -1);
-    }
+//
+template<int alphabet_size = 26, char minimal_char = 'a'>
+class aho_corasick {
+	struct vertex {
+		vector<int>next;
+		bool leaf = false;
+		int suffix_link; // Fail link
+		int exit; // Nearest fail link leaf
+		int cnt; // For multiple matches
+		vector<int>finish; // vector if multple patterns with same name present and we need them all at output
+		vertex() {
+			suffix_link = -1;
+			exit = -1;
+			cnt = 0;
+			next.resize(alphabet_size, -1);
+		}
+	};
+	vector<vertex>T; // Aho Corasick Tree
+	vector<string>P; // Patterns
+	aho_corasick(const vector<string>& S): P(S) {
+		T.emplace_back();
+		T[0].finish.emplace_back(0);
+		add();
+	}
+	int query(const string& S, vector<bool>& isMatch) const {
+		int ans{};
+		int v = 0;
+		for (int i = 0; i < int(S.size()); ++i) {
+			int c = (S[i] - minimal_char);
+			if (T[v].next[c] != -1) {
+				v = T[v].next[c];
+			} else {
+				while (T[v].next[c] == -1 && v != 0) {
+					v = T[v].suffix_link;
+				}
+				v = T[v].next[c];
+			}
+			if (v == -1) {
+				v = 0;
+			}
+			ans += T[v].cnt;
+			int t = v;
+			while (t > 0) {
+				if (!T[t].finish.empty()) {
+					for (int x : T[t].finish) {
+						// cout << "Pattern " << x + 1 << " matched at " << ((i + 1) - int(P[x].size()) + 1) << '\n';
+						isMatch[x] = 1; // xth pattern is present in text
+					}
+				}
+				t = T[t].exit;
+			}
+		}
+		return ans;
+	}
+  private:
+	void add() {
+		int N = int(P.size());
+		for (int i = 0; i < N; ++i) {
+			int v = 0;
+			for (int j = 0 ; j < int(P[i].size()); ++j) {
+				int c = (P[i][j] - minimal_char);
+				if (T[v].next[c] == -1) {
+					T[v].next[c] = int(T.size());
+					T.emplace_back();
+				}
+				v = T[v].next[c];
+			}
+			T[v].finish.emplace_back(i);
+			T[v].leaf = true;
+			T[v].cnt++;
+		}
+		build_automaton();
+	}
+	void build_automaton() {
+		queue<int>q;
+		q.push(0);
+		while (!q.empty()) {
+			int u = q.front(); q.pop();
+			vertex v = T[u];
+			for (int j = 0; j < alphabet_size; j++) {
+				int x = v.next[j];
+				if (x != -1) {
+					int l = v.suffix_link;
+					while (l != -1 && T[l].next[j] == -1) {
+						l = T[l].suffix_link;
+					}
+					T[x].suffix_link = (l == -1 ? 0 : T[l].next[j]);
+					T[x].cnt += T[T[x].suffix_link].cnt;
+					T[x].exit = T[T[x].suffix_link].leaf ? T[x].suffix_link : T[T[x].suffix_link].exit;
+					q.push(x);
+				}
+			}
+		}
+	}
 };
-template<int ALPHABET_SIZE, char MINIMAL_CHAR>
-struct Aho_Corasick
-{
-    static constexpr int ROOT_ID = 0;
-    vector<array<int, ALPHABET_SIZE>>edges;
-    vector<int>suffixLink;
-    vector<ll>sum;
-    int current_node;
-    explicit Aho_Corasick(const vector<pair<string, int>> &s): current_node(ROOT_ID), edges(1), suffixLink(1, -1), sum(1, 0)
-    {
-        edges[ROOT_ID].fill(-1);
-        for(const auto &p : s)
-        {
-            int node = ROOT_ID;
-            for(char c : p.first)
-            {
-                int req = c - 'a';
-                if(edges[node][req] == -1)
-                {
-                    edges[node][req] = edges.size();
-                    edges.emplace_back();
-                    edges.back().fill(-1);
-                    suffixLink.emplace_back(-1);
-                    sum.emplace_back(0);
-                }
-                node = edges[node][req];
-            }
-            sum[node] += p.second;
-        }
-        queue<int>q;
-        for(int i = 0; i < ALPHABET_SIZE; i++)
-        {
-            if(edges[ROOT_ID][i] == -1)
-                edges[ROOT_ID][i] = 0;
-        }
-        for(int i = 0; i < ALPHABET_SIZE; i++)
-        {
-            if(edges[ROOT_ID][i] != ROOT_ID)
-            {
-                suffixLink[edges[ROOT_ID][i]] = ROOT_ID;//All non empty links to root
-                q.push(edges[ROOT_ID][i]);//Flood the queue
-            }
-        }
-        //Go down one level each time using queue
-        while(!q.empty())
-        {
-            int node = q.front();
-            q.pop();
-            for(int i = 0; i < ALPHABET_SIZE; i++)
-            {
-                if(edges[node][i] != -1)
-                {
-                    int suffix = suffixLink[node];
-                    while(edges[suffix][i] == -1)
-                    {
-                        suffix = suffixLink[suffix];
-                    }
-                    suffix = edges[suffix][i];
-                    suffixLink[edges[node][i]] = suffix;
-                    sum[edges[node][i]] += sum[suffix];
-                    q.push(edges[node][i]);
-                }
-            }
-        }
-    }
-    void setNode(int node)
-    {
-        current_node = node;
-    }
-    void resetNode()
-    {
-        setNode(ROOT_ID);
-    }
-    long long getCurrentNodeSum()
-    {
-        return sum[current_node];
-    }
-    void move(char c)
-    {
-        int req = c - 'a';
-        while (edges[current_node][req] == -1)
-            current_node = suffixLink[current_node];
-        current_node = edges[current_node][req];
-    }
-};
-int32_t main()
-{
-    ios::sync_with_stdio(false);
-    cin.tie(0);
-    int tt;
-    cin >> tt;
-    while(tt--)
-    {
-        string a, b;
-        cin >> a >> b;
-        int n;
-        cin >> n;
-        vector<pair<string, int>>vec(n);
-        for(int i = 0; i < n; i++)
-        {
-            cin >> vec[i].first >> vec[i].second;
-        }
-        Aho_Corasick<26, 'a'>aho_Corasick(vec);
-        aho_Corasick.resetNode();
-        vector<ll>prefASum(a.size());
-        vector<int> prefANode(a.size());
-        for (int i = 0; i < a.size(); i++)
-        {
-            aho_Corasick.move(a[i]);
-            prefASum[i] = aho_Corasick.getCurrentNodeSum();
-            if (i != 0)
-            {
-                prefASum[i] += prefASum[i - 1];
-            }
-            prefANode[i] = aho_Corasick.current_node;
-        }
-        aho_Corasick.resetNode();
-        vector<long long> suffBSum(b.size());
-        for (int i = 0; i < b.size(); i++)
-        {
-            aho_Corasick.move(b[i]);
-            suffBSum[i] = aho_Corasick.getCurrentNodeSum();
-        }
-        for (int i = (int) b.size() - 2; i >= 0; i--)
-        {
-            suffBSum[i] += suffBSum[i + 1];
-        }
-        long long ans = 0;
-        for (int i = 0; i < a.size(); i++)
-        {
-            for (int j = 0; j < b.size(); j++)
-            {
-                long long cur = prefASum[i];
-
-                aho_Corasick.setNode(prefANode[i]);
-                for (int k = j; k <= j + 24 && k < b.size(); k++)
-                {
-                    aho_Corasick.move(b[k]);
-                    cur += aho_Corasick.getCurrentNodeSum();
-                }
-                if (j + 25 < b.size())
-                {
-                    cur += suffBSum[j + 25];
-                }
-                ans = max(ans, cur);
-            }
-        }
-        cout << ans << '\n';
-    }
-    return 0;
-}
-// https://www.codechef.com/problems/TWOSTRS

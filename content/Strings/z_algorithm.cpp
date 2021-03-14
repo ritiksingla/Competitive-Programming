@@ -1,7 +1,7 @@
 // Z Algorithm
 //
 template <typename T>
-vector<int> z_function(int n, const T &s) {
+vector<int> z_function(int n, const T& s) {
     vector<int> z(n, n);
     int l = 0, r = 0;
     for (int i = 1; i < n; i++) {
@@ -18,6 +18,6 @@ vector<int> z_function(int n, const T &s) {
 }
 
 template <typename T>
-vector<int> z_function(const T &s) {
+vector<int> z_function(const T& s) {
     return z_function((int) s.size(), s);
 }

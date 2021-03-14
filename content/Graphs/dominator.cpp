@@ -1,7 +1,7 @@
-// Dominator Tree 
+// Dominator Tree
 //
 template <typename T>
-vector<int> find_dominators(const digraph<T> &g, int root) {
+vector<int> find_dominators(const digraph<T>& g, int root) {
     int n = g.n;
     vector<int> pos(n, -1);
     vector<int> order;
@@ -10,7 +10,7 @@ vector<int> find_dominators(const digraph<T> &g, int root) {
         pos[v] = (int) order.size();
         order.push_back(v);
         for (int id : g.g[v]) {
-            auto &e = g.edges[id];
+            auto& e = g.edges[id];
             int u = e.to;
             if (pos[u] == -1) {
                 parent[u] = v;
@@ -39,11 +39,11 @@ vector<int> find_dominators(const digraph<T> &g, int root) {
     digraph<int> g_rev = g.reverse();
     vector<int> idom(n, -1);
     vector<int> link(n, 0);
-    vector< vector<int> > bucket(n);
+    vector<vector<int>> bucket(n);
     for (int it = (int) order.size() - 1; it >= 0; it--) {
         int w = order[it];
         for (int id : g_rev.g[w]) {
-            auto &e = g_rev.edges[id];
+            auto& e = g_rev.edges[id];
             int u = e.to;
             sdom[w] = min(sdom[w], sdom[find_best(u)]);
         }
@@ -52,7 +52,7 @@ vector<int> find_dominators(const digraph<T> &g, int root) {
             link[u] = find_best(u);
         }
         for (int id : g.g[w]) {
-            auto &e = g.edges[id];
+            auto& e = g.edges[id];
             int u = e.to;
             if (parent[u] == w) {
                 p[u] = w;
