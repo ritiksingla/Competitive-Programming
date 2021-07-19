@@ -21,6 +21,8 @@ using ld = long double;
     We have assumed for the sake of simplicity that no three lines
     are concurrent.
 */
+
+/* Simple Implementation */
 vector<ll>M, C;
 int p;
 bool bad(ll l1, ll l2, ll l3) {
@@ -45,3 +47,49 @@ ll query(ll x) {
     }
     return M[p] * x + C[p];
 }
+
+/* Complex Implementation */
+struct Line {
+	mutable long long slope, bias, p;
+	bool operator<(const Line& o) const {
+		return slope < o.slope;
+	}
+	bool operator<(long long x) const {
+		return p < x;
+	}
+}; // Line
+struct LineContainer : multiset<Line, less<>> {
+	const long long inf = numeric_limits<long long>::max();
+	long long div(long long a, long long b) {
+		return a / b - ((a ^ b) < 0 && a % b);
+	}
+	bool isect(iterator x, iterator y) {
+		if (y == end()) {
+			x->p = inf;
+			return false;
+		}
+		if (x->slope == y->slope) {
+			x->p = x->bias > y->bias ? inf : -inf;
+		} else {
+			x->p = div(y->bias - x->bias, x->slope - y->slope);
+		}
+		return x->p >= y->p;
+	}
+	void add(long long slope, long long bias) {
+		auto z = insert({slope, bias, 0}), y = z++, x = y;
+		while (isect(y, z)) {
+			z = erase(z);
+		}
+		if (x != begin() && isect(--x, y)) {
+			isect(x, y = erase(y));
+		}
+		while ((y = x) != begin() && (--x)->p >= y->p) {
+			isect(x, erase(y));
+		}
+	}
+	long long query(long long x) {
+		assert(!empty());
+		auto l = *lower_bound(x);
+		return l.slope * x + l.bias;
+	}
+}; // LineContainer
